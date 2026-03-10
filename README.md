@@ -33,3 +33,17 @@ Auto-loaded co-op mod bootstrap for Dishonored using a `dinput8.dll` proxy.
 - Если у тебя уже есть другой `dinput8.dll` (другой мод/лоадер), нужен chain-load.
 - `dxgi.dll` (например ReShade) не гарантирует загрузку `dishonored_mp.dll`, если специально не настроен чейн.
 - Адреса engine hooks пока заглушки — для реального UI-injection в меню нужны точные оффсеты под твою версию Dishonored.
+
+
+## Если GitHub пишет про конфликты
+
+Запусти проверку и авто-очистку незавершённых merge/rebase/cherry-pick:
+
+```bash
+./scripts/fix_git_conflicts.sh
+```
+
+Скрипт:
+- завершает зависшие git-операции (`merge --abort`, `rebase --abort`, `cherry-pick --abort`)
+- ищет конфликтные маркеры `<<<<<<< ======= >>>>>>>`
+- проверяет, что рабочее дерево чистое и готово к публикации
