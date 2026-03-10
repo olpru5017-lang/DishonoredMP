@@ -13,24 +13,28 @@ cmake --build "${BUILD_DIR}" --config Release
 rm -rf "${PKG_DIR}" "${ZIP_PATH}"
 mkdir -p "${PKG_DIR}"
 
-if [[ -f "${BUILD_DIR}/dishonored_mp.dll" ]]; then
-  cp "${BUILD_DIR}/dishonored_mp.dll" "${PKG_DIR}/dishonored_mp.dll"
-elif [[ -f "${BUILD_DIR}/Release/dishonored_mp.dll" ]]; then
-  cp "${BUILD_DIR}/Release/dishonored_mp.dll" "${PKG_DIR}/dishonored_mp.dll"
-elif [[ -f "${BUILD_DIR}/libdishonored_mp.so" ]]; then
-  cp "${BUILD_DIR}/libdishonored_mp.so" "${PKG_DIR}/libdishonored_mp.so"
+if [[ -f "${BUILD_DIR}/dinput8.dll" ]]; then
+  cp "${BUILD_DIR}/dinput8.dll" "${PKG_DIR}/dinput8.dll"
+elif [[ -f "${BUILD_DIR}/Release/dinput8.dll" ]]; then
+  cp "${BUILD_DIR}/Release/dinput8.dll" "${PKG_DIR}/dinput8.dll"
+elif [[ -f "${BUILD_DIR}/libdinput8.so" ]]; then
+  cp "${BUILD_DIR}/libdinput8.so" "${PKG_DIR}/libdinput8.so"
 else
-  echo "ERROR: Plugin binary not found in build output." >&2
+  echo "ERROR: Proxy plugin binary not found in build output." >&2
   exit 1
 fi
 
 cp "${ROOT_DIR}/dishonored_mp.cfg" "${PKG_DIR}/dishonored_mp.cfg"
 cat > "${PKG_DIR}/INSTALL.txt" <<'TXT'
-DishonoredMP quick install
+DishonoredMP quick install (auto-load)
 
-1) Copy the plugin file (dishonored_mp.dll on Windows) into Dishonored game folder.
-2) Copy dishonored_mp.cfg next to the plugin.
-3) Start the game. The mod initializes automatically and injects Multiplayer button in main menu.
+1) Copy dinput8.dll into Dishonored\Binaries\Win32.
+2) Copy dishonored_mp.cfg next to dinput8.dll.
+3) Start the game. The mod initializes automatically through dinput8 proxy loading.
+4) Check dishonored_mp.log to confirm successful startup.
+
+Important:
+- If another mod already uses dinput8.dll, you must chain-load or merge proxies.
 TXT
 
 (

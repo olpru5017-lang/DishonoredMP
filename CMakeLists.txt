@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(DishonoredMP VERSION 0.2.0 LANGUAGES CXX)
+project(DishonoredMP VERSION 0.4.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -26,9 +26,9 @@ add_library(dmp_core STATIC
 target_include_directories(dmp_core PUBLIC include)
 target_compile_definitions(dmp_core PRIVATE NOMINMAX)
 
-add_library(dishonored_mp SHARED src/DllMain.cpp)
-target_link_libraries(dishonored_mp PRIVATE dmp_core)
-set_target_properties(dishonored_mp PROPERTIES OUTPUT_NAME "dishonored_mp")
+add_library(dinput8 SHARED src/ProxyDInput8.cpp)
+target_link_libraries(dinput8 PRIVATE dmp_core)
+set_target_properties(dinput8 PROPERTIES OUTPUT_NAME "dinput8")
 
 if (DMP_BUILD_TESTS)
   enable_testing()

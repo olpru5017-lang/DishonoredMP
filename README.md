@@ -1,40 +1,66 @@
 # DishonoredMP
 
-Single-DLL host-authoritative co-op multiplayer mod framework for Dishonored.
+Auto-loaded co-op mod bootstrap for Dishonored using a `dinput8.dll` proxy.
+
+## Почему у тебя не работало раньше
+
+`dishonored_mp.dll` как отдельный файл игра не обязана загружать сама.
+Нужна точка автозагрузки. В этой версии используется стандартный proxy-механизм через `dinput8.dll`.
 
 ## Быстрый старт (одна команда)
-
-Чтобы не вводить вручную `cmake ...`, используй:
 
 ```bash
 ./scripts/make_one_file.sh
 ```
 
-На выходе получишь один готовый архив:
-
+Результат:
 - `dist/dishonored_mp_package.zip`
 
 Внутри:
-- `dishonored_mp.dll` (на Windows-сборке) или `libdishonored_mp.so` (в Linux-контейнере)
+- `dinput8.dll` (Windows) / `libdinput8.so` (контейнерный Linux-билд)
 - `dishonored_mp.cfg`
 - `INSTALL.txt`
 
-## Что делает DLL
+## Установка в игру (Win32)
 
-- Авто-инициализируется при загрузке игры
-- Подгружает `dishonored_mp.cfg`
-- Регистрирует runtime hooks
-- Добавляет кнопку **Multiplayer** в главное меню рядом с обычными пунктами кампании
+1. Скопируй `dinput8.dll` в `Dishonored\Binaries\Win32`.
+2. Скопируй `dishonored_mp.cfg` рядом.
+3. Запусти игру.
+4. Проверь `dishonored_mp.log` — там должна быть строка про загрузку через dinput8 proxy.
 
-## Ручная сборка (если нужно)
+## Важно
+
+- Если у тебя уже есть другой `dinput8.dll` (другой мод/лоадер), нужен chain-load.
+- `dxgi.dll` (например ReShade) не гарантирует загрузку `dishonored_mp.dll`, если специально не настроен чейн.
+- Адреса engine hooks пока заглушки — для реального UI-injection в меню нужны точные оффсеты под твою версию Dishonored.
+
+
+## Если GitHub пишет про конфликты
+
+Запусти проверку и авто-очистку незавершённых merge/rebase/cherry-pick:
 
 ```bash
-cmake -S . -B build
-cmake --build build
-ctest --test-dir build --output-on-failure
+./scripts/fix_git_conflicts.sh
 ```
 
-## Notes
+Скрипт:
+- завершает зависшие git-операции (`merge --abort`, `rebase --abort`, `cherry-pick --abort`)
+- ищет конфликтные маркеры `<<<<<<< ======= >>>>>>>`
+- проверяет, что рабочее дерево чистое и готово к публикации
 
-- Hook addresses are placeholders and should be mapped to your Dishonored build.
-- Transport backend can be swapped to ENet/SteamNetworking in networking layer.
+
+## Конфликты в GitHub PR (кнопка *Resolve conflicts*)
+
+Если GitHub показывает конфликт по `CMakeLists.txt`, `README.md`, `scripts/make_one_file.sh`, запусти:
+
+```bash
+./scripts/resolve_pr_conflicts.sh origin/main
+```
+
+Что делает скрипт:
+- `fetch --all`
+- merge с `origin/main`
+- автoразрешение конфликтов в перечисленных файлах через `--ours`
+- авто-коммит merge
+
+Если конфликт в других файлах — скрипт остановится и покажет, что править вручную.
