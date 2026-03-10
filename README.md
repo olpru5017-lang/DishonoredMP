@@ -47,3 +47,20 @@ Auto-loaded co-op mod bootstrap for Dishonored using a `dinput8.dll` proxy.
 - завершает зависшие git-операции (`merge --abort`, `rebase --abort`, `cherry-pick --abort`)
 - ищет конфликтные маркеры `<<<<<<< ======= >>>>>>>`
 - проверяет, что рабочее дерево чистое и готово к публикации
+
+
+## Конфликты в GitHub PR (кнопка *Resolve conflicts*)
+
+Если GitHub показывает конфликт по `CMakeLists.txt`, `README.md`, `scripts/make_one_file.sh`, запусти:
+
+```bash
+./scripts/resolve_pr_conflicts.sh origin/main
+```
+
+Что делает скрипт:
+- `fetch --all`
+- merge с `origin/main`
+- автoразрешение конфликтов в перечисленных файлах через `--ours`
+- авто-коммит merge
+
+Если конфликт в других файлах — скрипт остановится и покажет, что править вручную.
